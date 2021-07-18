@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"log"
 
-	"github.com/disposedtrolley/natter-api/db"
+	"github.com/disposedtrolley/natter-api/internal/db"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-ENTRYPOINT:=github.com/disposedtrolley/natter-api
+ENTRYPOINT:=github.com/disposedtrolley/natter-api/cmd/natter-api
 BINARY:=natter-api
 
 build:

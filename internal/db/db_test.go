@@ -3,7 +3,7 @@ package db_test
 import (
 	"testing"
 
-	"github.com/disposedtrolley/natter-api/db"
+	"github.com/disposedtrolley/natter-api/internal/db"
 	"github.com/stretchr/testify/require"
 )
 
