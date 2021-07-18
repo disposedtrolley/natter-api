@@ -1,3 +1,14 @@
+-- Some important differences between the schema here and the version
+-- shown in the book:
+--
+-- 1) SQLite doesn't support the VARCHAR length restrictions (VARCHAR
+--    is translated into TEXT).
+-- 2) SQLite doesn't support user accounts, which means granular
+--    permissions cannot be set with GRANT and REVOKE statements.
+--    While prepared statements eliminate the possibility of SQL
+--    injection, the principle of least privilege can't be applied
+--    here in the same way as the book.
+
 CREATE TABLE spaces(
        space_id INTEGER PRIMARY KEY AUTOINCREMENT,
        name VARCHAR(255) NOT NULL,
