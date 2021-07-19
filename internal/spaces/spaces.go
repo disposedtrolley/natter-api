@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 type Space struct {
@@ -43,6 +44,16 @@ func CreateHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		if !ownerValid(space.Owner) {
+			http.Error(w, "owner should be between 1 and 30 characters and must not contain special characters", http.StatusBadRequest)
+			return
+		}
+
+		if !spaceNameValid(space.Name) {
+			http.Error(w, "name should be less than or equal to 255 characters", http.StatusBadRequest)
+			return
+		}
+
 		id, err := insertSpace(db, space.Name, space.Owner)
 		if err != nil {
 			log.Printf("insert new space record: %+v", err)
@@ -71,4 +82,12 @@ func insertSpace(db *sql.DB, name, owner string) (id int, err error) {
 		name, owner).Scan(&id)
 
 	return id, err
+}
+
+func ownerValid(owner string) bool {
+	return regexp.MustCompile("[a-zA-Z][a-zA-Z0-9]{1,29}").MatchString(owner)
+}
+
+func spaceNameValid(name string) bool {
+	return len(name) <= 255
 }
