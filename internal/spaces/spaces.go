@@ -43,14 +43,14 @@ func CreateHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		err = db.QueryRow(
-			"INSERT INTO spaces (name, owner) VALUES ($1, $2) RETURNING space_id",
-			space.Name, space.Owner).Scan(&space.ID)
+		id, err := insertSpace(db, space.Name, space.Owner)
 		if err != nil {
 			log.Printf("insert new space record: %+v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
+		space.ID = id
 
 		uri := fmt.Sprintf("/spaces/%d", space.ID)
 
@@ -63,4 +63,12 @@ func CreateHandler(db *sql.DB) http.HandlerFunc {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(resp)
 	}
+}
+
+func insertSpace(db *sql.DB, name, owner string) (id int, err error) {
+	err = db.QueryRow(
+		"INSERT INTO spaces (name, owner) VALUES ($1, $2) RETURNING space_id",
+		name, owner).Scan(&id)
+
+	return id, err
 }
