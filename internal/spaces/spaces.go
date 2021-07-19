@@ -30,7 +30,7 @@ func CreateHandler(db *sql.DB) http.HandlerFunc {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			log.Printf("read request body: %+v", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			http.Error(w, "", http.StatusInternalServerError)
 			return
 		}
 		defer r.Body.Close()
@@ -39,14 +39,14 @@ func CreateHandler(db *sql.DB) http.HandlerFunc {
 		err = json.Unmarshal(body, &space)
 		if err != nil {
 			log.Printf("unmarshal request body: %+v", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			http.Error(w, "", http.StatusInternalServerError)
 			return
 		}
 
 		id, err := insertSpace(db, space.Name, space.Owner)
 		if err != nil {
 			log.Printf("insert new space record: %+v", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			http.Error(w, "", http.StatusInternalServerError)
 			return
 		}
 
