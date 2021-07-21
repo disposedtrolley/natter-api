@@ -21,8 +21,8 @@ type spaceResponse struct {
 	URI  string `json:"uri"`
 }
 
-func CreateHandler(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func CreateHandler(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			log.Printf("read request body: %+v", err)
@@ -68,7 +68,7 @@ func CreateHandler(db *sql.DB) http.HandlerFunc {
 		w.Header().Add("Location", uri)
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(resp)
-	}
+	})
 }
 
 func insertSpace(db *sql.DB, name, owner string) (id int, err error) {
