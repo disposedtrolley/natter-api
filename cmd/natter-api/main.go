@@ -20,7 +20,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/spaces", middleware.JSON(spaces.CreateHandler(db)))
+	mux.Handle("/spaces", middleware.SetJSONResponseHeader(spaces.CreateHandler(db)))
 
 	server := &http.Server{
 		Addr:    ":4567",
