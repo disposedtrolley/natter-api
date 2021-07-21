@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/disposedtrolley/natter-api/internal/db"
-	"github.com/disposedtrolley/natter-api/internal/middleware"
+	m "github.com/disposedtrolley/natter-api/internal/middleware"
 	"github.com/disposedtrolley/natter-api/internal/spaces"
 )
 
@@ -20,7 +20,12 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.Handle("/spaces", middleware.SetJSONResponseHeader(spaces.CreateHandler(db)))
+	onlyPost := m.NewEnsureHTTPMethod(http.MethodPost)
+
+	mux.Handle("/spaces",
+		onlyPost(
+			m.SetJSONResponseHeader(
+				spaces.CreateHandler(db))))
 
 	server := &http.Server{
 		Addr:    ":4567",

@@ -23,11 +23,6 @@ type spaceResponse struct {
 
 func CreateHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			log.Printf("read request body: %+v", err)
