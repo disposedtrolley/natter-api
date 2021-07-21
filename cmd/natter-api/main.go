@@ -20,7 +20,10 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	c := m.NewChain(m.NewEnsureHTTPMethod(http.MethodPost), m.SetJSONResponseHeader)
+	c := m.NewChain()
+	c = c.With(m.NewEnsureHTTPMethod(http.MethodPost))
+	c = c.With(m.NewEnsureContentType("application/json"))
+	c = c.With(m.SetJSONResponseHeader)
 	mux.Handle("/spaces", c.Wrap(spaces.CreateHandler(db)))
 
 	server := &http.Server{

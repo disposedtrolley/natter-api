@@ -14,6 +14,11 @@ func NewChain(mw ...Middleware) Chain {
 	}
 }
 
+func (c Chain) With(mw Middleware) Chain {
+	c.before = append(c.before, mw)
+	return c
+}
+
 func (c Chain) Wrap(h http.Handler) http.Handler {
 	for _, mw := range c.before {
 		h = mw(h)
