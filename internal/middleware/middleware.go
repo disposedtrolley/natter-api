@@ -20,8 +20,10 @@ func (c Chain) With(mw Middleware) Chain {
 }
 
 func (c Chain) Wrap(h http.Handler) http.Handler {
-	for _, mw := range c.before {
-		h = mw(h)
+	// Apply middleware in reverse order (so it's executed in
+	// the correct order).
+	for i := range c.before {
+		h = c.before[len(c.before)-1-i](h)
 	}
 
 	return h
