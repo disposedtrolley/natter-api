@@ -20,12 +20,8 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	onlyPost := m.NewEnsureHTTPMethod(http.MethodPost)
-
-	mux.Handle("/spaces",
-		onlyPost(
-			m.SetJSONResponseHeader(
-				spaces.CreateHandler(db))))
+	c := m.NewChain(m.NewEnsureHTTPMethod(http.MethodPost), m.SetJSONResponseHeader)
+	mux.Handle("/spaces", c.Wrap(spaces.CreateHandler(db)))
 
 	server := &http.Server{
 		Addr:    ":4567",
