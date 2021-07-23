@@ -24,6 +24,7 @@ func main() {
 	c = c.With(m.NewEnsureHTTPMethod(http.MethodPost))
 	c = c.With(m.NewEnsureContentType("application/json"))
 	c = c.With(m.SetJSONResponseHeader)
+	c = c.With(m.SetSecurityResponseHeaders)
 	mux.Handle("/spaces", c.Wrap(spaces.CreateHandler(db)))
 
 	server := &http.Server{
