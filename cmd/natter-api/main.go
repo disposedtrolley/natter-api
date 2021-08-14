@@ -8,6 +8,7 @@ import (
 	"github.com/disposedtrolley/natter-api/internal/db"
 	m "github.com/disposedtrolley/natter-api/internal/middleware"
 	"github.com/disposedtrolley/natter-api/internal/spaces"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -18,18 +19,17 @@ func main() {
 
 	defer db.Close()
 
-	mux := http.NewServeMux()
-
 	c := m.NewChain()
-	c = c.With(m.NewEnsureHTTPMethod(http.MethodPost))
 	c = c.With(m.NewEnsureContentType("application/json"))
 	c = c.With(m.SetJSONResponseHeader)
 	c = c.With(m.SetSecurityResponseHeaders)
-	mux.Handle("/spaces", c.Wrap(spaces.CreateHandler(db)))
+
+	r := mux.NewRouter()
+	r.Handle("/spaces", c.Wrap(spaces.CreateHandler(db))).Methods(http.MethodPost)
 
 	server := &http.Server{
 		Addr:    ":4567",
-		Handler: mux,
+		Handler: r,
 	}
 
 	log.Fatal(server.ListenAndServe())
