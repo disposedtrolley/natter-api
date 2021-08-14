@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/disposedtrolley/natter-api/internal/db"
 	m "github.com/disposedtrolley/natter-api/internal/middleware"
@@ -19,12 +20,15 @@ func main() {
 
 	defer db.Close()
 
+	limiter := m.NewLimiter(2, time.Second)
+
 	c := m.NewChain()
 	c = c.With(m.NewEnsureContentType("application/json"))
 	c = c.With(m.SetJSONResponseHeader)
 	c = c.With(m.SetSecurityResponseHeaders)
 
 	r := mux.NewRouter()
+	r.Use(limiter.Handler())
 	r.Handle("/spaces", c.Wrap(spaces.CreateHandler(db))).Methods(http.MethodPost)
 
 	server := &http.Server{
